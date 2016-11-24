@@ -22,35 +22,35 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-Each scraper can be run from the command-line. To see the available arguments, run `python <scraper_file>.py -h`. You can run the scrapers in tandem using the provided `scrape.sh` shell script.
+Each scraper can be run from the command-line. To see the available arguments, run `python <scraper_file>.py -h`. You can also run the scrapers in tandem using the provided `scrape.sh` shell script.
 
-Scraping occurs in two phases. In the first phase, the scraper compiles a list of hyperlinks to the relevant articles based on a passed query value. In the second phase the scraper extracts the article text from each link, and saves the collection in a JSON file with the following format:
+Scraping occurs in two phases. In the first phase, the scraper compiles a list of article hyperlinks based on the user query  and saves them in newline-delimited text file in the `./links` directory. In the second phase the scraper loops over each link identified during phase 1 and extracts the article text, saving the final scraped article collection in a JSON file in the `./scraped_json` directory. The output JSON has the the following format:
 
 ```json
 {
     "articles": [
         {
-            "author": ["John Doe"],
+            "author": ["Netochka Nezvanova"],
             "before_election": false,
             "description": "Article 1 lede",
             "publishedAt": "2016-11-18T00:00:00+00:00",
             "text": "This is the article text.",
             "title": "Article 1 Title",
-            "url": "http://www.nytimes.com/aponline/2016/11/18/us/article-1.html",
+            "url": "http://www.nytimes.com/2016/11/18/us/article-1.html",
             "urlToImage": null
         },
         {
-            "author": ["Jane Doe"],
+            "author": ["Rudolph Lingens", "Luther Blissett"],
             "before_election": true,
             "description": "Article 2 lede",
             "publishedAt": "2016-11-05T00:02:00+00:00",
             "text": "This is some more article text.",
             "title": "Article 2 Title",
-            "url": "http://www.nytimes.comreuters/2016/11/5/business/article-2.html",
+            "url": "http://www.nytimes.com/2016/11/5/article-2.html",
             "urlToImage": null
         },        
     ],
-    "from_last": "30+Days",
+    "from_last": "30 days",
     "pagerange": [1, 5],
     "query":"my search query",
     "source":"new-york-times",
