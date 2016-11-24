@@ -11,59 +11,61 @@ from newspaper import Article
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 
-tz = pytz.utc
-ELECTION_DATE = datetime.datetime(2016, 11, 9, 11, tzinfo=tz)
-
 parser = argparse.ArgumentParser(
     description='A web scraper for Washington Post articles.')
 
 requiredNamed = parser.add_argument_group('required arguments')
 requiredNamed.add_argument('-q', '--query', type=str, required=True,
-                           help='Query string')
+                           help="Query string")
 
 parser.add_argument('-l', '--link_file', type=str, default="",
-                    help='Path to newline-delimited collection of article links')
+                    help="Path to a newline-delimited file of article links "
+                         "to scrape")
 parser.add_argument('-f', '--from_last', type=int, default=60,
                     help="Dates to pull articles from. Valid values are 24[hours], "
-                    "7[days], 60[days], 365[days], [since]2005")
+                         "7[days], 60[days], 365[days], [since]2005")
 parser.add_argument('-t', '--doc_type', type=str, default="Article",
-                    help='Type of article to scrape. A space separated string of '
-                         'values. Valid arguments are "Article" and/or "Blog"')
-
+                    help="Type of article to scrape. A space separated string of "
+                         "values. Valid arguments are 'Article' and/or 'Blog'")
 parser.add_argument('--blog_id', type=str, default="",
                     help="The name of a specific blog to search. Only matters "
                          "if doc_type includes 'Blog'. Valid arguments are "
                          "'The+Fix', 'Politics', 'Opinions', 'Post+Politics'. "
                          "Defaults to all")
 parser.add_argument('--sleep_time', type=int, default=5,
-                    help='Time (in seconds) to wait between queries')
+                    help="Time (in seconds) to wait between queries")
 parser.add_argument('--page_timeout', type=int, default=30,
-                    help="Time (in seconds) to wait until we stop trying to load "
+                    help="Time (in seconds) after which we stop trying to load "
                          "a page and retry")
 
-PAGE_RANGE = [1, 1000]  # only matters if LINKS_FROM_FILE is false
-args = parser.parse_args()
-QUERY = args.query
-QUERY = QUERY.replace(' ', '+')
 
-SLEEP_TIME = args.sleep_time
-PAGE_LOAD_TIMEOUT = args.page_timeout
+def parse_args(parser):
+    args = parser.parse_args()
+    QUERY = args.query
+    QUERY = QUERY.replace(' ', '+')
 
-LINKS_FROM_FILE = False
-if len(args.link_file) > 0:
-    LINKS_FROM_FILE = args.link_file
+    SLEEP_TIME = args.sleep_time
+    PAGE_LOAD_TIMEOUT = args.page_timeout
 
-if args.from_last == 24:
-    FROM_LAST = "24+Hours"
-elif args.from_last == 365:
-    FROM_LAST = "12+Months"
-elif args.from_last == "2005":
-    FROM_LAST = "All+Since+2005"
-else:
-    FROM_LAST = str(args.from_last) + "+Days"
+    LINKS_FROM_FILE = False
+    if len(args.link_file) > 0:
+        LINKS_FROM_FILE = args.link_file
 
-CONTENT_TYPE = "%2C".join(args.doc_type.split(" "))
-BLOG_NAME = "%2C".join(args.blog_id.split(" "))
+    if args.from_last == 24:
+        FROM_LAST = "24+Hours"
+    elif args.from_last == 365:
+        FROM_LAST = "12+Months"
+    elif args.from_last == "2005":
+        FROM_LAST = "All+Since+2005"
+    else:
+        FROM_LAST = str(args.from_last) + "+Days"
+
+    CONTENT_TYPE = "%2C".join(args.doc_type.split(" "))
+    BLOG_NAME = "%2C".join(args.blog_id.split(" "))
+
+    return QUERY, SLEEP_TIME, PAGE_LOAD_TIMEOUT, LINKS_FROM_FILE, \
+        FROM_LAST, CONTENT_TYPE, BLOG_NAME
+
 
 def render(query_url):
     browser = webdriver.PhantomJS()
@@ -220,4 +222,11 @@ def main():
 
 
 if __name__ == "__main__":
+    tz = pytz.utc
+
+    PAGE_RANGE = [1, 1000]
+    ELECTION_DATE = datetime.datetime(2016, 11, 9, 11, tzinfo=tz)
+    QUERY, SLEEP_TIME, PAGE_LOAD_TIMEOUT, LINKS_FROM_FILE, \
+        FROM_LAST, CONTENT_TYPE, BLOG_NAME = parse_args(parser)
+
     main()
