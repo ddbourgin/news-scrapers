@@ -51,7 +51,7 @@ def parse_args(parser):
     PAGE_LOAD_TIMEOUT = args.page_timeout
 
     if args.sort_by == 'newest':
-        SORT_BY = date
+        SORT_BY = 'date'
     else:
         SORT_BY = 'match'
 
@@ -187,9 +187,6 @@ def construct_article(link):
 
 def scrape_articles():
     articles, links = [], []
-    dtype = DOCUMENT_TYPE.replace("document_type", "")\
-                         .replace("%3A", "")\
-                         .replace("%22", "")
     froml = 'from last {} days'.format(FROM_LAST) if FROM_LAST != 0 else ""
 
     print('\n####### NPR Scraper #######')
