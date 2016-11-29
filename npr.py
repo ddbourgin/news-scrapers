@@ -40,7 +40,7 @@ parser.add_argument('--section', type=str, default="all",
                          "'Ask Me Another', 'Fresh Air', 'Invisibilia', 'Latino USA', "
                          "'Morning Edition', 'Snap Judgment', or 'TED Radio Hour', "
                          "'Weekend Edition - Saturday', 'Weekend Edition - Sunday', "
-                         "'Wait Wait... Don't Tell Me', and 'World Cafe'")
+                         "'Wait Wait... Don't Tell Me!', and 'World Cafe'")
 
 def parse_args(parser):
     args = parser.parse_args()
@@ -190,12 +190,12 @@ def scrape_articles():
     dtype = DOCUMENT_TYPE.replace("document_type", "")\
                          .replace("%3A", "")\
                          .replace("%22", "")
-    froml = FROM_LAST.replace("from", "").replace("to", " - ")
+    froml = 'from last {} days'.format(FROM_LAST) if FROM_LAST != 0 else ""
 
     print('\n####### NPR Scraper #######')
     print('Running query:')
-    print('Result pages {} - {} of {}s that contain "{}" from last {}\n'
-          .format(PAGE_RANGE[0], PAGE_RANGE[1], dtype, QUERY, froml))
+    print('Result pages {} - {} of {} articles that contain "{}" {}\n'
+          .format(PAGE_RANGE[0], PAGE_RANGE[1], SECTION, QUERY, froml))
 
     if not LINKS_FROM_FILE:
         links = collect_links()
